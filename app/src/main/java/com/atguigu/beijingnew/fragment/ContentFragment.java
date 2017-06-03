@@ -1,11 +1,11 @@
 package com.atguigu.beijingnew.fragment;
 
 import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RadioGroup;
 
+import com.atguigu.beijingnew.NoViewPager;
 import com.atguigu.beijingnew.R;
 import com.atguigu.beijingnew.base.BaseFragment;
 import com.atguigu.beijingnew.base.BasePager;
@@ -25,7 +25,7 @@ import butterknife.InjectView;
 public class ContentFragment extends BaseFragment {
 
     @InjectView(R.id.vp)
-    ViewPager vp;
+    NoViewPager  vp;
     @InjectView(R.id.rg_main)
     RadioGroup rgMain;
 
