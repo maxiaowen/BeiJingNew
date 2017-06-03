@@ -39,8 +39,8 @@ public class MainActivity extends SlidingFragmentActivity {
         slidingMenu.setMode(SlidingMenu.LEFT);
 
 
-        //设置滑动模式：不可用滑动，滑动编边缘，全屏滑动
-        slidingMenu.setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
+        //设置滑动模式：不可用滑动
+        slidingMenu.setTouchModeAbove(SlidingMenu.TOUCHMODE_NONE);
 
         //设置主页面占的宽度
         slidingMenu.setBehindOffset(200);

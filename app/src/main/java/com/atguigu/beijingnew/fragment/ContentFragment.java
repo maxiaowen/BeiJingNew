@@ -8,11 +8,13 @@ import android.widget.RadioGroup;
 
 import com.atguigu.beijingnew.NoViewPager;
 import com.atguigu.beijingnew.R;
+import com.atguigu.beijingnew.activity.MainActivity;
 import com.atguigu.beijingnew.base.BaseFragment;
 import com.atguigu.beijingnew.base.BasePager;
 import com.atguigu.beijingnew.pager.HomePager;
 import com.atguigu.beijingnew.pager.NewsPager;
 import com.atguigu.beijingnew.pager.SettingPager;
+import com.slidingmenu.lib.SlidingMenu;
 
 import java.util.ArrayList;
 
@@ -89,6 +91,18 @@ public class ContentFragment extends BaseFragment {
         public void onPageSelected(int position) {
             pagers.get(position).initData();
 
+            if(position ==1){
+                //可以侧滑
+                MainActivity mainActivity = (MainActivity) context;
+                mainActivity.getSlidingMenu().setTouchModeAbove( SlidingMenu.TOUCHMODE_FULLSCREEN);
+            }else{
+                //不可用侧滑
+                MainActivity mainActivity = (MainActivity) context;
+                mainActivity.getSlidingMenu().setTouchModeAbove( SlidingMenu.TOUCHMODE_NONE);
+
+
+            }
+
         }
 
         @Override
@@ -96,6 +110,7 @@ public class ContentFragment extends BaseFragment {
 
         }
     }
+
 
     class MyAdapter extends PagerAdapter {
         @Override
