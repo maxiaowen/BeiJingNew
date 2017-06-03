@@ -58,4 +58,9 @@ public class MainActivity extends SlidingFragmentActivity {
         ft.commit();
 
     }
+
+    public LeftMenuFragment getLeftMenuFragment() {
+
+        return (LeftMenuFragment) getSupportFragmentManager().findFragmentByTag(LEFT_TAG);
+    }
 }
