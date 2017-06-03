@@ -7,6 +7,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.atguigu.beijingnew.R;
+import com.atguigu.beijingnew.activity.MainActivity;
 
 /**
  * Created by Administrator on 2017/6/2.
@@ -27,13 +28,22 @@ public class BasePager {
     public FrameLayout fl_content;
 
 
-    public BasePager(Context context){
+    public BasePager(final Context context){
         this.context = context;
         //初始化布局
         rootView = View.inflate(context, R.layout.base_pager,null);
         tv_title = (TextView) rootView.findViewById(R.id.tv_title);
         ib_menu = (ImageButton) rootView.findViewById(R.id.ib_menu);
         fl_content = (FrameLayout) rootView.findViewById(R.id.fl_content);
+
+        //设置点击事件
+        ib_menu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //关-开
+                ((MainActivity) context).getSlidingMenu().toggle();
+            }
+        });
     }
 
 

@@ -59,8 +59,20 @@ public class MainActivity extends SlidingFragmentActivity {
 
     }
 
+    /**
+     * 得到LeftMenuFragment
+     * @return
+     */
     public LeftMenuFragment getLeftMenuFragment() {
 
         return (LeftMenuFragment) getSupportFragmentManager().findFragmentByTag(LEFT_TAG);
+    }
+
+    /**
+     * 得到ContentFragment
+     * @return
+     */
+    public ContentFragment getContentFragment() {
+        return  (ContentFragment) getSupportFragmentManager().findFragmentByTag(MAIN_TAG);
     }
 }
