@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import com.atguigu.beijingnew.R;
 import com.atguigu.beijingnew.base.MenuDetailBasePager;
 import com.atguigu.beijingnew.domain.NewsCenterBean;
+import com.viewpagerindicator.TabPageIndicator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,10 +24,13 @@ public class NewsMenuDetailPager extends MenuDetailBasePager {
      */
     private final List<NewsCenterBean.DataBean.ChildrenBean> datas;
     private ViewPager viewpager;
+    private TabPageIndicator indicator;
     /**
      * TabDetailPager页面集合
      */
     private List<TabDetailPager> tabDetailPagers;
+
+
 
     public NewsMenuDetailPager(Context context, List<NewsCenterBean.DataBean.ChildrenBean> children) {
         super(context);
@@ -38,6 +42,7 @@ public class NewsMenuDetailPager extends MenuDetailBasePager {
         //创建子类的视图
         View view = View.inflate(context, R.layout.pager_news_menu_detail,null);
         viewpager = (ViewPager) view.findViewById(R.id.viewpager);
+        indicator = (TabPageIndicator) view.findViewById(R.id.indicator);
         //创建子类的视图
         return view;
     }
@@ -55,6 +60,9 @@ public class NewsMenuDetailPager extends MenuDetailBasePager {
 
         //设置适配器
         viewpager.setAdapter(new NewsMenuDetailPagerAdapter());
+
+        //TabPageIndicator和ViewPager关联起来
+        indicator.setViewPager(viewpager);
     }
 
     class NewsMenuDetailPagerAdapter extends PagerAdapter {
@@ -72,6 +80,16 @@ public class NewsMenuDetailPager extends MenuDetailBasePager {
         @Override
         public void destroyItem(ViewGroup container, int position, Object object) {
             container.removeView((View) object);
+        }
+
+        /**
+         * 得到标题
+         * @param position
+         * @return
+         */
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return datas.get(position).getTitle();
         }
 
         @Override
