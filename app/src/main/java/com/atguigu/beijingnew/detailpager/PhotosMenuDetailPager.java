@@ -1,17 +1,24 @@
 package com.atguigu.beijingnew.detailpager;
 
 import android.content.Context;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 
 import com.atguigu.beijingnew.R;
+import com.atguigu.beijingnew.adapter.PhotosMenuDetailPagerAdapater;
 import com.atguigu.beijingnew.base.MenuDetailBasePager;
 import com.atguigu.beijingnew.domain.NewsCenterBean;
+import com.atguigu.beijingnew.domain.PhotosMenuDetailPagerBean;
 import com.atguigu.beijingnew.utils.ConstantUtils;
+import com.google.gson.Gson;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
+
+import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -28,7 +35,17 @@ public class PhotosMenuDetailPager extends MenuDetailBasePager {
     @InjectView(R.id.progressbar)
     ProgressBar progressbar;
 
+    private SwipeRefreshLayout swipeRefreshLayout;
+
     private String url;
+
+    private PhotosMenuDetailPagerAdapater adapater;
+
+
+    /**
+     * 图组的数据
+     */
+    private List<PhotosMenuDetailPagerBean.DataBean.NewsBean> datas;
 
     public PhotosMenuDetailPager(Context context, NewsCenterBean.DataBean dataBean) {
         super(context);
@@ -39,7 +56,21 @@ public class PhotosMenuDetailPager extends MenuDetailBasePager {
     public View initView() {
         //创建子类的视图
         View view = View.inflate(context, R.layout.pager_photos_menu_detail, null);
+        swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshLayout);
         ButterKnife.inject(this,view);
+
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+               getDataFromNet(url);
+            }
+        });
+
+        //为SwipeRefreshLayout设置刷新时的颜色变化，最多可以设置4种
+        swipeRefreshLayout.setColorSchemeResources(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
         return view;
     }
 
@@ -68,6 +99,8 @@ public class PhotosMenuDetailPager extends MenuDetailBasePager {
                         Log.e("TAG", "图组请求成功==" + response);
                         processData(response);
 
+
+
                     }
 
 
@@ -76,5 +109,25 @@ public class PhotosMenuDetailPager extends MenuDetailBasePager {
 
     private void processData(String json) {
 
+        PhotosMenuDetailPagerBean bean = new Gson().fromJson(json, PhotosMenuDetailPagerBean.class);
+        datas = bean.getData().getNews();
+
+        if(datas != null && datas.size() >0){
+            //有数据
+            progressbar.setVisibility(View.GONE);
+            adapater = new PhotosMenuDetailPagerAdapater(context,datas);
+            //设置适配器
+            recyclerview.setAdapter(adapater);
+
+            //布局管理器
+            recyclerview.setLayoutManager(new LinearLayoutManager(context,LinearLayoutManager.VERTICAL,false));
+
+        }else{
+            //没有数据
+            progressbar.setVisibility(View.VISIBLE);
+        }
+
+        //结束下拉刷新
+        swipeRefreshLayout.setRefreshing(false);
     }
 }
