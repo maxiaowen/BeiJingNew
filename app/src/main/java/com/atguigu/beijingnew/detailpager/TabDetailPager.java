@@ -6,6 +6,7 @@ import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -48,6 +49,11 @@ public class TabDetailPager extends MenuDetailBasePager {
      * 顶部的新闻的数据集合
      */
     private List<TabDetailPagerBean.DataBean.TopnewsBean> topnews;
+    /**
+     * ListView的新闻的数据集合
+     */
+    private List<TabDetailPagerBean.DataBean.NewsBean> news;
+    private ListAdapter adapter;
 
     public TabDetailPager(Context context, NewsCenterBean.DataBean.ChildrenBean childrenBean) {
         super(context);
@@ -58,27 +64,20 @@ public class TabDetailPager extends MenuDetailBasePager {
     public View initView() {
         //创建子类的视图
         View view = View.inflate(context, R.layout.pager_tab_detail, null);
-        ButterKnife.inject(this,view);
+        ButterKnife.inject(this, view);
 
         View viewTop = View.inflate(context, R.layout.top_tab_detail, null);
         viewpager = (ViewPager) viewTop.findViewById(R.id.viewpager);
         tvTitle = (TextView) viewTop.findViewById(R.id.tv_title);
         llPointGroup = (LinearLayout) viewTop.findViewById(R.id.ll_point_group);
 
-        lv.setTop();
+        //把顶部的部分以添加头的方式加入ListView中
+        lv.addHeaderView(viewTop);
 
         //设置监听ViewPager页面的变化
         viewpager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-
-                String title = topnews.get(position).getTitle();
-                tvTitle.setText(title);
 
                 //把之前的设置默认
                 llPointGroup.getChildAt(prePosition).setEnabled(false);
@@ -88,6 +87,15 @@ public class TabDetailPager extends MenuDetailBasePager {
 
                 //记录当前值
                 prePosition = position;
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+
+                String title = topnews.get(position).getTitle();
+                tvTitle.setText(title);
+
 
 
             }
@@ -106,7 +114,7 @@ public class TabDetailPager extends MenuDetailBasePager {
         super.initData();
 
         url = ConstantUtils.BASE_URL + childrenBean.getUrl();
-        Log.e("TAG","url=="+url);
+        Log.e("TAG", "url==" + url);
         //设置数据
         getDataFromNet();
     }
@@ -137,7 +145,7 @@ public class TabDetailPager extends MenuDetailBasePager {
     }
 
     private void processData(String response) {
-        TabDetailPagerBean bean = new Gson().fromJson(response,TabDetailPagerBean.class);
+        TabDetailPagerBean bean = new Gson().fromJson(response, TabDetailPagerBean.class);
         topnews = bean.getData().getTopnews();
         //设置适配器
         viewpager.setAdapter(new MyPagerAdapter());
@@ -147,16 +155,16 @@ public class TabDetailPager extends MenuDetailBasePager {
         //把之前的缓存移除
         llPointGroup.removeAllViews();
         //添加指示点
-        for(int i = 0; i < topnews.size(); i++) {
+        for (int i = 0; i < topnews.size(); i++) {
 
             ImageView point = new ImageView(context);
             point.setBackgroundResource(R.drawable.point_selector);
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(8,8);
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(8, 8);
             point.setLayoutParams(params);
 
-            if(i==0){
+            if (i == 0) {
                 point.setEnabled(true);
-            }else {
+            } else {
                 point.setEnabled(false);
                 params.leftMargin = 8;
             }
@@ -165,11 +173,76 @@ public class TabDetailPager extends MenuDetailBasePager {
 
             //--------------listView----------------------------------
 
+            news = bean.getData().getNews();
+            adapter = new ListAdapter();
+            lv.setAdapter(adapter);
+
 
         }
     }
 
-    class MyPagerAdapter extends PagerAdapter{
+    class ListAdapter extends BaseAdapter {
+
+        @Override
+        public int getCount() {
+            return news.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return null;
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return 0;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+
+            ViewHolder viewHolder;
+            if (convertView == null) {
+                convertView = View.inflate(context, R.layout.item_news, null);
+                viewHolder = new ViewHolder(convertView);
+                convertView.setTag(viewHolder);
+            }else {
+                viewHolder = (ViewHolder) convertView.getTag();
+            }
+
+            //根据位置得到对应的数据
+            TabDetailPagerBean.DataBean.NewsBean newsBean = news.get(position);
+            viewHolder.tvDesc.setText(newsBean.getTitle());
+            viewHolder.tvTime.setText(newsBean.getPubdate());
+
+            String imageUrl = ConstantUtils.BASE_URL+newsBean.getListimage();
+            Glide.with(context)
+                    .load(imageUrl)
+                    .placeholder(R.drawable.pic_item_list_default)
+                    .error(R.drawable.pic_item_list_default)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .into(viewHolder.ivIcon);
+
+            return convertView;
+        }
+
+
+    }
+
+    static class ViewHolder {
+        @InjectView(R.id.iv_icon)
+        ImageView ivIcon;
+        @InjectView(R.id.tv_desc)
+        TextView tvDesc;
+        @InjectView(R.id.tv_time)
+        TextView tvTime;
+
+        ViewHolder(View view) {
+            ButterKnife.inject(this, view);
+        }
+    }
+
+    class MyPagerAdapter extends PagerAdapter {
 
         @Override
         public int getCount() {
@@ -178,7 +251,7 @@ public class TabDetailPager extends MenuDetailBasePager {
 
         @Override
         public boolean isViewFromObject(View view, Object object) {
-            return view==object;
+            return view == object;
         }
 
         @Override
