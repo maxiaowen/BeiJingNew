@@ -2,10 +2,12 @@ package com.atguigu.beijingnew.detailpager;
 
 import android.content.Context;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 
 import com.atguigu.beijingnew.R;
@@ -129,5 +131,30 @@ public class PhotosMenuDetailPager extends MenuDetailBasePager {
 
         //结束下拉刷新
         swipeRefreshLayout.setRefreshing(false);
+    }
+
+    /**
+     * true:显示List效果
+     * false:显示Grid
+     */
+    private boolean isShowList = true;
+
+    public void swichListAndGrid(ImageButton iv) {
+        if(isShowList){
+            //显示Grid效果
+            recyclerview.setLayoutManager(new GridLayoutManager(context,2,GridLayoutManager.VERTICAL,false));
+            isShowList = false;
+            //按钮状态-List
+            iv.setImageResource(R.drawable.icon_pic_list_type);
+//            adapater.notifyItemChanged(0,datas.size());
+        }else{
+            //显示List
+            //布局管理器
+            recyclerview.setLayoutManager(new LinearLayoutManager(context,LinearLayoutManager.VERTICAL,false));
+            isShowList = true;
+            //按钮状态-Grid
+            iv.setImageResource(R.drawable.icon_pic_grid_type);
+//            adapater.notifyItemChanged(0,datas.size());
+        }
     }
 }
