@@ -13,8 +13,6 @@ import com.atguigu.beijingnew.R;
 import com.atguigu.beijingnew.activity.PicassoSampleActivity;
 import com.atguigu.beijingnew.domain.PhotosMenuDetailPagerBean;
 import com.atguigu.beijingnew.utils.ConstantUtils;
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import java.util.List;
 
@@ -51,12 +49,13 @@ public class PhotosMenuDetailPagerAdapater extends RecyclerView.Adapter<PhotosMe
         holder.tvTitle.setText(newsBean.getTitle());
         //3.设置点击事件
         String imageUrl = ConstantUtils.BASE_URL + newsBean.getListimage();
-        Glide.with(context)
-                .load(imageUrl)
-                .placeholder(R.drawable.pic_item_list_default)
-                .error(R.drawable.pic_item_list_default)
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .into(holder.ivIcon);
+//        Glide.with(context)
+//                .load(imageUrl)
+//                .placeholder(R.drawable.pic_item_list_default)
+//                .error(R.drawable.pic_item_list_default)
+//                .diskCacheStrategy(DiskCacheStrategy.ALL)
+//                .into(holder.ivIcon);
+        //使用自定义请求图片
 
     }
 
