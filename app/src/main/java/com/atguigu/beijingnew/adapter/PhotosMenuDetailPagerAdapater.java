@@ -2,8 +2,12 @@ package com.atguigu.beijingnew.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -12,7 +16,9 @@ import android.widget.TextView;
 import com.atguigu.beijingnew.R;
 import com.atguigu.beijingnew.activity.PicassoSampleActivity;
 import com.atguigu.beijingnew.domain.PhotosMenuDetailPagerBean;
+import com.atguigu.beijingnew.utils.BitmapCacheUtils;
 import com.atguigu.beijingnew.utils.ConstantUtils;
+import com.atguigu.beijingnew.utils.NetCachUtils;
 
 import java.util.List;
 
@@ -26,13 +32,51 @@ import butterknife.InjectView;
 public class PhotosMenuDetailPagerAdapater extends RecyclerView.Adapter<PhotosMenuDetailPagerAdapater.MyViewHolder> {
 
 
+
+
     private final List<PhotosMenuDetailPagerBean.DataBean.NewsBean> datas;
     private final Context context;
 
+    private final RecyclerView recyclerview;
+    /**
+     * 做图片三级缓存
+     * 1.内存缓存
+     * 2.本地缓存
+     * 3.网络缓存
+     */
+    private BitmapCacheUtils bitmapCacheUtils;
 
-    public PhotosMenuDetailPagerAdapater(Context context, List<PhotosMenuDetailPagerBean.DataBean.NewsBean> datas) {
+    private Handler handler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what){
+                case NetCachUtils.SUCESS:
+                    Bitmap bitmap = (Bitmap) msg.obj;
+                    int position = msg.arg1;
+                    Log.e("TAG","请求图片成功=="+position);
+                    ImageView imageview = (ImageView) recyclerview.findViewWithTag(position);
+                    if(imageview != null && bitmap != null){
+                        imageview.setImageBitmap(bitmap);
+                    }
+
+
+                    break;
+                case NetCachUtils.FAIL:
+                    position = msg.arg1;
+                    Log.e("TAG","请求图片失败=="+position);
+                    break;
+            }
+        }
+    };
+
+    public PhotosMenuDetailPagerAdapater(Context context, List<PhotosMenuDetailPagerBean.DataBean.NewsBean> datas, RecyclerView recyclerview) {
         this.datas = datas;
         this.context = context;
+        this.recyclerview = recyclerview;
+
+        //把Hanlder传入构造方法
+        bitmapCacheUtils = new BitmapCacheUtils(handler);
     }
 
     @Override
@@ -56,6 +100,12 @@ public class PhotosMenuDetailPagerAdapater extends RecyclerView.Adapter<PhotosMe
 //                .diskCacheStrategy(DiskCacheStrategy.ALL)
 //                .into(holder.ivIcon);
         //使用自定义请求图片
+        Bitmap bitmap = bitmapCacheUtils.getBitmap(imageUrl,position);
+        //图片对应的Tag就是位置
+        holder.ivIcon.setTag(position);
+        if(bitmap != null){//来自内存和本地，不包括网络
+            holder.ivIcon.setImageBitmap(bitmap);
+        }
 
     }
 
