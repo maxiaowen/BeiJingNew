@@ -2,6 +2,7 @@ package com.atguigu.beijingnew.utils;
 
 import android.graphics.Bitmap;
 import android.os.Handler;
+import android.util.Log;
 
 /**
  * Created by Administrator on 2017/6/7.
@@ -9,14 +10,20 @@ import android.os.Handler;
 
 public class BitmapCacheUtils {
 
-    /**
-     * 网络缓存工具类
+
+    /**网络缓存工具类
      */
 
     private NetCachUtils netCachUtils;
 
+    /**
+     * 本地缓存工具类
+     */
+    private LocalCachUtils localCachUtils;
+
     public BitmapCacheUtils(Handler handler){
-        netCachUtils = new NetCachUtils(handler);
+        localCachUtils = new LocalCachUtils();
+        netCachUtils = new NetCachUtils(handler, localCachUtils);
     }
 
     /**
@@ -36,6 +43,13 @@ public class BitmapCacheUtils {
         // 从内存中取图片
 
         //从本地文件中取图片
+        if (localCachUtils != null) {
+            Bitmap bitmap = localCachUtils.getBitmap(imageUrl);
+            if (bitmap != null) {
+                Log.e("TAG", "图片是从本地获取的哦==" + position);
+                return bitmap;
+            }
+        }
 
         //请求网络图片，获取图片，显示到控件上
         netCachUtils.getBitmapFromNet(imageUrl,position);
