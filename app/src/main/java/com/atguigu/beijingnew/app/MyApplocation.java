@@ -2,6 +2,8 @@ package com.atguigu.beijingnew.app;
 
 import android.app.Application;
 
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.zhy.http.okhttp.OkHttpUtils;
 
 import java.util.concurrent.TimeUnit;
@@ -27,5 +29,9 @@ public class MyApplocation extends Application {
         OkHttpUtils.initClient(okHttpClient);
 
         ShareSDK.initSDK(this);
+
+        ImageLoaderConfiguration config = ImageLoaderConfiguration
+                .createDefault(this);
+        ImageLoader.getInstance().init(config);
     }
 }
