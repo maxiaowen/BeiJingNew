@@ -6,6 +6,7 @@ import com.zhy.http.okhttp.OkHttpUtils;
 
 import java.util.concurrent.TimeUnit;
 
+import cn.sharesdk.framework.ShareSDK;
 import okhttp3.OkHttpClient;
 
 /**
@@ -24,5 +25,7 @@ public class MyApplocation extends Application {
                 .build();
 
         OkHttpUtils.initClient(okHttpClient);
+
+        ShareSDK.initSDK(this);
     }
 }
