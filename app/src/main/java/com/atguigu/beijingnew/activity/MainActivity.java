@@ -15,6 +15,8 @@ public class MainActivity extends SlidingFragmentActivity {
     public static final String LEFT_TAG = "left_tag";
     public static final String MAIN_TAG = "main_tag";
 
+    String haha;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -22,6 +24,8 @@ public class MainActivity extends SlidingFragmentActivity {
         initSlidingMenu();
         //初始化Fragment
         initFragment();
+
+        System.out.println(haha.equals("hello"));  // s没有进行赋值，所以会出现NullPointException异常
 
 
     }
